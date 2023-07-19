@@ -1,0 +1,10 @@
+mlflow==1.21.*
+scikit-learn
+fastapi
+uvicorn
+python-multipart
+tensorflow
+python-dotenv
+Pillow
+starlette
+boto3
