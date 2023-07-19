@@ -1,7 +1,6 @@
 name: DGMD API Image Build
 
 on:
-  workflow_dispatch:
   push:
     branches:
       - master
