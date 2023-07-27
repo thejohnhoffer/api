@@ -8,9 +8,10 @@ from fastapi import FastAPI, File, UploadFile
 import boto3
 from mlflow.tracking import MlflowClient
 from starlette.middleware.cors import CORSMiddleware
+import easyocr
 
 import api.settings as settings
-from api.utils import read_imagefile, split_s3_bucket_key
+from api.utils import read_imagefile, split_s3_bucket_key, get_ocr_matches
 
 app = FastAPI()
 
@@ -24,6 +25,7 @@ app.add_middleware(
 )
 
 model = None
+reader = None
 index2label = {}
 
 
@@ -41,6 +43,7 @@ def initialize_model():
 
     global model
     global index2label
+    global reader
 
     client = MlflowClient()
 
@@ -66,6 +69,8 @@ def initialize_model():
         obj = client.get_object(Bucket=bucket_name, Key=key_name)
         index2label = json.loads(obj["Body"].read().decode("utf-8"))
 
+    # Initialize OCR Reader
+    reader = easyocr.Reader(['en'])
 
 @app.get("/")
 async def root():
@@ -94,10 +99,12 @@ async def predict(file: UploadFile = File(...)):
     """Provides a class prediction based on uploaded image."""
 
     # Convert uploaded file into image for prediction:
-    image = read_imagefile(await file.read())
+    f = await file.read()
+    image = read_imagefile(f)
 
     global model
     global index2label
+    global reader
 
     if not model or not index2label:
         initialize_model()
@@ -112,5 +119,9 @@ async def predict(file: UploadFile = File(...)):
     if index2label:
         class_index = index2label.get(str(class_index), str(class_index))
 
+    # Get OCR labels
+    match_list = [index2label[index] for index in index2label]
+    ocr_matches = get_ocr_matches( reader, f, match_list )
+
     print(class_index)
-    return {"prediction": class_index}
+    return {"prediction": class_index, "ocr_matches": ocr_matches}

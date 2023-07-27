@@ -15,3 +15,7 @@ IMAGE_HEIGHT = os.environ.get("IMAGE_HEIGHT", 192)
 # Model metadata:
 MODEL_NAME = os.environ.get("MODEL_NAME", "spice_model")
 MODEL_STAGE = os.environ.get("MODEL_STAGE", "Production")
+
+# OCR tresholds:
+OCR_TRESHOLD = os.environ.get("OCR_TRESHOLD", 0.5)
+LEVENSHTEIN_TRESHOLD = os.environ.get("LEVENSHTEIN_TRESHOLD", 3)

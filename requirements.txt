@@ -5,6 +5,8 @@ uvicorn
 python-multipart
 tensorflow
 python-dotenv
-Pillow
+Pillow==9.5.0
 starlette
 boto3
+python-Levenshtein
+easyOCR

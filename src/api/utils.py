@@ -3,25 +3,38 @@ from io import BytesIO
 
 import numpy as np
 from PIL import Image
+from itertools import product
+from Levenshtein import distance
 
-# import api.settings as settings
+
+import api.settings as settings
 
 
 def read_imagefile(file) -> Image.Image:
     """Converts UploadFile to Image for prediction processing."""
     image = Image.open(BytesIO(file))
 
-    # image_width = settings.IMAGE_WIDTH
-    # image_height = settings.IMAGE_HEIGHT
-
-    image_width = 256
-    image_height = 192
+    image_width = settings.IMAGE_WIDTH
+    image_height = settings.IMAGE_HEIGHT
 
     image = np.asarray(image.resize((image_width, image_height)))[..., :3]
     image = np.expand_dims(image, 0)
     image = image / 127.5 - 1.0
 
     return image
+
+def get_ocr_matches( reader, img, match_list ):
+    results = reader.readtext(img)
+    
+    # Filter by OCR_Threshold:
+    results = [ str(result[1]).lower() for result in results if float(result[2]) >= settings.OCR_TRESHOLD ]
+
+    return [
+        pair[0]
+        for pair
+        in product( match_list, results )
+        if distance( pair[0], pair[1]) <= settings.LEVENSHTEIN_TRESHOLD
+    ]
 
 
 def split_s3_bucket_key(s3_path):
