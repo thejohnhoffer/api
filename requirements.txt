@@ -4,7 +4,7 @@ fastapi
 uvicorn
 python-multipart
 python-dotenv
-Pillow~=10.0.0
+Pillow~=9.5.0
 starlette
 boto3~=1.28.12
 tensorflow==2.13.0
