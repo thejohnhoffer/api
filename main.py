@@ -4,7 +4,6 @@ import time
 
 import mlflow.keras
 import numpy as np
-from functools import lru_cache
 from fastapi import FastAPI, File, UploadFile, Request
 import boto3
 from mlflow.tracking import MlflowClient
