@@ -19,3 +19,7 @@ MODEL_STAGE = os.environ.get("MODEL_STAGE", "Production")
 # OCR tresholds:
 OCR_TRESHOLD = os.environ.get("OCR_TRESHOLD", 0.5)
 LEVENSHTEIN_TRESHOLD = os.environ.get("LEVENSHTEIN_TRESHOLD", 3)
+
+# API keys:
+OPENAI_KEY = os.environ.get("OPENAI_KEY", "")
+

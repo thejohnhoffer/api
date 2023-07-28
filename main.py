@@ -14,7 +14,6 @@ import easyocr
 import api.settings as settings
 from api.utils import read_imagefile, split_s3_bucket_key, get_ocr_matches
 from api.openai import spice_to_recipe
-from api.config import config
 
 app = FastAPI()
 
@@ -31,9 +30,6 @@ model = None
 reader = None
 index2label = {}
 
-@lru_cache()
-def get_settings():
-    return config.Settings()
 
 @app.on_event("startup")
 async def startup_event():
@@ -134,11 +130,12 @@ async def predict(file: UploadFile = File(...)):
 
 
 @app.post("/recipe")
-async def recipe(req : Request, settings: config.Settings = Depends(get_settings)):
+async def recipe(req : Request):
     """Provides a recipe based on suggested spices."""
     req_data = await req.json()
     spices = req_qata.get("spices", [])
-    openai_key = settings.openai_key
+    openai_key = settings.OPENAI_KEY
+    print(openai_key)
     no_recipe = ""
     recipe = (
         no_recipe if len(spices) < 1 else spice_to_recipe(spices, openai_key)

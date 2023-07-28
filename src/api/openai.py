@@ -1,13 +1,17 @@
 import openai
 import re
 
+def to_prompt(spices):
+    s = ', '.join(spices)
+    return f'Please make a recipe from the following list of ingredients: {s}'
 
 #api request instructions
-def spice_to_recipe(prompt, openapi_key):
+def spice_to_recipe(spices, openapi_key):
+
     openai.api_key = openapi_key
     response = openai.Completion.create(
+        prompt = to_prompt(spices),
         engine = 'text-davinci-003',
-        prompt = prompt,
         max_tokens = 128,
         temperature = 0.5,
         n = 1,
