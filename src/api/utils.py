@@ -23,18 +23,35 @@ def read_imagefile(file) -> Image.Image:
 
     return image
 
-def get_ocr_matches( reader, img, match_list ):
+def get_ocr_matches( reader, img, spice_list ):
+    # Format the full OCR result information
     results = reader.readtext(img)
-    
-    # Filter by OCR_Threshold:
-    results = [ str(result[1]).lower() for result in results if float(result[2]) >= settings.OCR_TRESHOLD ]
-
-    return [
-        pair[0]
-        for pair
-        in product( match_list, results )
-        if distance( pair[0], pair[1]) <= settings.LEVENSHTEIN_TRESHOLD
+    ocr_raw = [
+        {"text": str(r[0]).lower(), "box": r[1], "score": float(r[2])}
+        for r in results
     ]
+    # Map all predicted text to nearest valid spice
+    valid = {
+        real: read["text"] for (real, read) in product( spice_list, ocr_all )
+        if distance( real, read["text"]) <= settings.LEVENSHTEIN_TRESHOLD
+    }
+    # Include the valid spices and distance score
+    ocr_all = [
+        {"match": valid.get(d["text"], None), **d} for d in ocr_all
+    ]
+    # Filter by OCR score and text distance
+    ocr_matches = [
+        d["text"] for d in ocr_all if d["match"] is not None
+        and d["score"] >= settings.OCR_TRESHOLD
+    ]
+
+    return {
+        "ocr_matches": ocr_matches,
+        "ocr_all_results": ocr_all,
+        "ocr_threshold": settings.OCR_TRESHOLD,
+        "levenshtein_treshold": settings.LEVENSHTEIN_TRESHOLD,
+    }
+
 
 
 def split_s3_bucket_key(s3_path):

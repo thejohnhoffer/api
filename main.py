@@ -122,10 +122,12 @@ async def predict(file: UploadFile = File(...)):
 
     # Get OCR labels
     match_list = [index2label[index] for index in index2label]
-    ocr_matches = get_ocr_matches( reader, f, match_list )
+    all_ocr_results = get_ocr_matches( reader, f, match_list )
 
     print(class_index)
-    return {"prediction": class_index, "ocr_matches": ocr_matches}
+    return {
+        "prediction": class_index, **all_ocr_results
+    }
 
 @app.post("/recipe")
 async def recipe(req : Request):
