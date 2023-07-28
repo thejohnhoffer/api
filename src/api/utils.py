@@ -44,7 +44,7 @@ def get_ocr_matches( reader, img, spice_list ):
     ]
     # Filter by OCR score and text distance
     ocr_matches = [
-        d["text"] for d in ocr_all if d["match"] is not None
+        d["match"] for d in ocr_all if d["match"] is not None
         and d["score"] >= settings.OCR_TRESHOLD
     ]
 
