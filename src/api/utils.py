@@ -27,17 +27,17 @@ def get_ocr_matches( reader, img, spice_list ):
     # Format the full OCR result information
     results = reader.readtext(img)
     ocr_raw = [
-        {"text": str(r[0]).lower(), "box": r[1], "score": float(r[2])}
+        {"text": str(r[1]).lower(), "box": r[0], "score": float(r[2])}
         for r in results
     ]
     # Map all predicted text to nearest valid spice
     valid = {
-        real: read["text"] for (real, read) in product( spice_list, ocr_all )
+        real: read["text"] for (real, read) in product( spice_list, ocr_raw )
         if distance( real, read["text"]) <= settings.LEVENSHTEIN_TRESHOLD
     }
     # Include the valid spices and distance score
     ocr_all = [
-        {"match": valid.get(d["text"], None), **d} for d in ocr_all
+        {"match": valid.get(d["text"], None), **d} for d in ocr_raw
     ]
     # Filter by OCR score and text distance
     ocr_matches = [
