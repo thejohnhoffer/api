@@ -19,9 +19,9 @@ def parse_recipe(recipe, spices):
     added_spices = re.split('\s*,\s*', added)
     spices = spices + added_spices
     # Remove empty items from lists
-    ingredients = [re.sub('\s+', ' ', s) for s in ingredients]
+    ingredients = [re.sub('\s+', ' ', s).strip() for s in ingredients]
     ingredients = [s for s in ingredients if len(s) > 3]
-    spices = [re.sub('\s+', ' ', s) for s in spices]
+    spices = [re.sub('\s+', ' ', s).strip() for s in spices]
     spices = [s for s in spices if len(s) > 3]
     # Pre-format example display of recipe
     text = (
