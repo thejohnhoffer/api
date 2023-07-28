@@ -41,12 +41,12 @@ def get_ocr_matches( reader, img, spice_list ):
         if distance(read["text"], match) <= settings.LEVENSHTEIN_TRESHOLD:
             text_matches[read["text"]] = match
 
-    # Include the valid spices and distance score
+    # Include matched spice in each OCR result
     ocr_all = [
         {"match": text_matches.get(d["text"], None), **d} for d in ocr_raw
     ]
 
-    # Filter by OCR score and text distance
+    # Include only list of matched spices
     ocr_matches = [
         d["match"] for d in ocr_all if d["match"] is not None
         and d["score"] >= settings.OCR_TRESHOLD
