@@ -13,7 +13,7 @@ import easyocr
 
 import api.settings as settings
 from api.utils import read_imagefile, split_s3_bucket_key, get_ocr_matches
-from api.openai import spice_to_recipe
+from api.recipe import spice_to_recipe
 
 app = FastAPI()
 
@@ -134,9 +134,14 @@ async def recipe(req : Request):
     req_data = await req.json()
     spices = req_data.get("spices", [])
     openai_key = settings.OPENAI_KEY
-    no_recipe = ""
+    no_recipe = {
+        "title": "",
+        "recipe": "",
+        "spices": spices,
+        "ingredients": []
+    }
     recipe = (
         no_recipe if len(spices) < 1 else spice_to_recipe(spices, openai_key)
     )
 
-    return { "spices": spices, "recipe": recipe }
+    return recipe 

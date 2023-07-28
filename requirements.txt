@@ -5,7 +5,6 @@ uvicorn
 python-multipart
 python-dotenv
 Pillow~=10.0.0
-numpy~=1.24.3
 starlette
 boto3~=1.28.12
 tensorflow==2.13.0
