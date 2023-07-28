@@ -23,11 +23,14 @@ def read_imagefile(file) -> Image.Image:
 
     return image
 
+def parse_box(box):
+    return np.round(box).astype(int).tolist()
+
 def get_ocr_matches( reader, img, spice_list ):
     # Format the full OCR result information
     results = reader.readtext(img)
     ocr_raw = [
-        {"text": str(r[1]).lower(), "box": r[0], "score": float(r[2])}
+        { "text": str(r[1]).lower(), "box": parse_box(r[0]), "score": float(r[2]) }
         for r in results
     ]
     # Map all predicted text to nearest valid spice
@@ -49,7 +52,7 @@ def get_ocr_matches( reader, img, spice_list ):
         "ocr_matches": ocr_matches,
         "ocr_all_results": ocr_all,
         "ocr_threshold": settings.OCR_TRESHOLD,
-        "levenshtein_treshold": settings.LEVENSHTEIN_TRESHOLD,
+        "levenshtein_threshold": settings.LEVENSHTEIN_TRESHOLD,
     }
 
 
