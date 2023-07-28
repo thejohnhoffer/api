@@ -128,14 +128,12 @@ async def predict(file: UploadFile = File(...)):
     print(class_index)
     return {"prediction": class_index, "ocr_matches": ocr_matches}
 
-
 @app.post("/recipe")
 async def recipe(req : Request):
     """Provides a recipe based on suggested spices."""
     req_data = await req.json()
-    spices = req_qata.get("spices", [])
+    spices = req_data.get("spices", [])
     openai_key = settings.OPENAI_KEY
-    print(openai_key)
     no_recipe = ""
     recipe = (
         no_recipe if len(spices) < 1 else spice_to_recipe(spices, openai_key)
